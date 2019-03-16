@@ -1,3 +1,4 @@
+# a docker-specific version about the filesystem
 version: '2.1'
 
 services:
@@ -9,3 +10,5 @@ services:
       - '.:/usr/src/app'
     ports:
       - 5001:5000 # expose ports - HOST:CONTAINER
+    environment:
+      - APP_SETTINGS=project.config.DevelopmentConfig
