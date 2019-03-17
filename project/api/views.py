@@ -15,7 +15,7 @@ def ping_pong():
 def add_user():
     # "request" is from flask
     post_data = request.get_json()
-    if not post_data:
+    if not post_data or 'username' not in post_data:
         response_object = {
             'status': 'fail',
             'message': 'Invalid payload.'
