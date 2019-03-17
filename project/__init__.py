@@ -11,8 +11,8 @@ app.config.from_object('project.config.DevelopmentConfig')
 
 # view the app configs, including DEBUG and TESTING
 # $: docker-compose logs -f users-service
-import sys
-print(app.config, file=sys.stderr)
+# import sys
+# print(app.config, file=sys.stderr)
 
 # instantiate the db
 db = SQLAlchemy(app)

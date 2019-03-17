@@ -5,7 +5,7 @@ from flask import current_app
 from flask_testing import TestCase
 from project import app
 
-@unittest.skip
+
 class TestDevelopmentConfig(TestCase):
     def create_app(self):
         app.config.from_object('project.config.DevelopmentConfig')
@@ -13,7 +13,7 @@ class TestDevelopmentConfig(TestCase):
 
     def test_app_is_development(self):
         self.assertFalse(app.config['SECRET_KEY'] is None)
-        self.assertTrue(app.config['SECRET_KEY'] == os.environ.get('SECRET_KEY'))
+        self.assertTrue(app.config['SECRET_KEY'] == KEY)
         self.assertTrue(app.config['DEBUG'] is True)
         self.assertFalse(current_app is None)
         self.assertTrue(
@@ -37,7 +37,7 @@ class TestTestingConfig(TestCase):
             app.config['SQLALCHEMY_DATABASE_URI'] ==
             'postgres://postgres:postgres@users-db:5432/users_test'
         )
-@unittest.skip
+
 class TestProductionConfig(TestCase):
     def create_app(self):
         app.config.from_object('project.config.ProductionConfig')
@@ -45,6 +45,6 @@ class TestProductionConfig(TestCase):
 
     def test_app_is_production(self):
         self.assertFalse(app.config['SECRET_KEY'] is None)
-        self.assertTrue(app.config['SECRET_KEY'] == os.environ.get('SECRET_KEY'))
+        self.assertTrue(app.config['SECRET_KEY'] == KEY)
         self.assertFalse(app.config['DEBUG'])
         self.assertFalse(app.config['TESTING'])
