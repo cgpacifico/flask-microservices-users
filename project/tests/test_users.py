@@ -97,8 +97,7 @@ class TestUserService(BaseTestCase):
                 content_type='application/json',
             )
             data = json.loads(response.data.decode())
-            print('no db writes, no duplicates yet!', data)
-            # self.assertEqual(response.status_code, 400)
-            # self.assertIn(
-            #     'Sorry. That email already exists.', data['message'])
-            # self.assertIn('fail', data['status'])
+            self.assertEqual(response.status_code, 400)
+            self.assertIn(
+                'Sorry. That email already exists.', data['message'])
+            self.assertIn('fail', data['status'])
