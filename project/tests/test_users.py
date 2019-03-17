@@ -63,3 +63,16 @@ class TestUserService(BaseTestCase):
             self.assertEqual(response.status_code, 400)
             self.assertIn('Invalid payload.', data['message'])
             self.assertIn('fail', data['status'])
+
+    def test_add_user_without_email(self):
+        """Ensure error is thrown if the JSON object does not have an email"""
+        with self.client:
+            response = self.client.post(
+                '/users',
+                data=json.dumps(dict(username='only-name-no-email')),
+                content_type='application/json',
+            )
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('Invalid payload.', data['message'])
+            self.assertIn('fail', data['status'])

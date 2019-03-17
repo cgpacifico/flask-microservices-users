@@ -4,6 +4,11 @@ from project import db
 
 users_blueprint = Blueprint('users', __name__)
 
+# test helper method
+def assert_required_keys(required_keys, json_data):
+    # woohoo, this returns a Bool
+    return required_keys <= json_data.keys()
+
 @users_blueprint.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify({
@@ -13,9 +18,11 @@ def ping_pong():
 
 @users_blueprint.route('/users', methods=['POST'])
 def add_user():
-    # "request" is from flask
+    required_user_keys = {'username', 'email'}
     post_data = request.get_json()
-    if not post_data or 'username' not in post_data:
+    required_keys_present = assert_required_keys(required_user_keys, post_data)
+
+    if not post_data or not required_keys_present:
         response_object = {
             'status': 'fail',
             'message': 'Invalid payload.'
