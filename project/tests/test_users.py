@@ -1,5 +1,6 @@
 import json
 from project.tests.base import BaseTestCase
+from project.api.models import User
 
 class TestUserService(BaseTestCase):
     "Tests for the Users Service"
@@ -23,12 +24,14 @@ class TestUserService(BaseTestCase):
     def test_add_user(self):
         """Ensure a new user can be added to the database"""
         # booo nothing about this test proves this information made it to the database
+        username = 'cara'
+        email = 'cara@snakes.com'
         with self.client:
             response = self.client.post(
                 '/users',
                 data = json.dumps(dict(
-                    username='cara',
-                    email='cara@snakes.com'
+                    username=username,
+                    email=email
                 )),
                 content_type='application/json',
             )
@@ -37,6 +40,21 @@ class TestUserService(BaseTestCase):
             self.assertEqual(response.status_code, 201)
             self.assertIn('cara@snakes.com was added!', data['message'])
             self.assertIn('success', data['status'])
+            # this maybe is all I need
+            user = User.query.filter_by(email=email).first()
+            self.assertFalse(user is None)
+            
+            # just proving that's a valid check
+            nope = User.query.filter_by(email='wat').first()
+            self.assertFalse(nope is None) # self.assertFalse(nope is None)
+                # AssertionError: True is not false
+
+            # object
+            print(user) # <project.api.models.User object at 0x7feab1bc2ba8>
+            
+            # getting actual data
+            print('I have the user', user.__dict__) # {'_sa_instance_state': <sqlalchemy.orm.state.InstanceState object at 0x7feab1bc2be0>, 'active': False, 'username': 'cara', 'created_at': datetime.datetime(2019, 3, 17, 20, 42, 46, 835495), 'email': 'cara@snakes.com', 'id': 1}
+
 
     def test_add_user_without_payload(self):
         """Ensure error is thrown if the JSON object is empty"""
