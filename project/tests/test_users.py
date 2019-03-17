@@ -3,6 +3,12 @@ from project import db
 from project.tests.base import BaseTestCase
 from project.api.models import User
 
+def db_add_user_helper(username, email):
+    user = User(username=username, email=email)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
 class TestUserService(BaseTestCase):
     "Tests for the Users Service"
 
@@ -109,9 +115,16 @@ class TestUserService(BaseTestCase):
         """Ensure getting a single user behaves correctly."""
         username = 'single_user'
         email = 'get@one_user.com'
-        user = User(username=username, email=email)
-        db.session.add(user)
-        db.session.commit()
+        # this User method forms a user object
+        # user = User(username=username, email=email)
+        # # then adds it
+        # db.session.add(user)
+        # # then saves it
+        # db.session.commit()
+
+        # use my helper instead
+        user = db_add_user_helper(username=username, email=email)
+
         with self.client:
             response = self.client.get(f'/users/{user.id}')
             data = json.loads(response.data.decode())
@@ -141,4 +154,6 @@ class TestUserService(BaseTestCase):
             self.assertEqual(response.status_code, 404)
             self.assertIn('User does not exist', data['message'])
             self.assertIn('fail', data['status'])
+
+
 
