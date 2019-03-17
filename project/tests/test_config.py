@@ -1,5 +1,6 @@
 import unittest
 import os
+from secrets import KEY
 from flask import current_app
 from flask_testing import TestCase
 from project import app
@@ -26,8 +27,8 @@ class TestTestingConfig(TestCase):
         return app
 
     def test_app_is_testing(self):
-        # self.assertFalse(app.config['SECRET_KEY'] is None)
-        self.assertTrue(app.config['SECRET_KEY'] == os.environ.get('SECRET_KEY'))
+        self.assertFalse(app.config['SECRET_KEY'] is None)
+        self.assertTrue(app.config['SECRET_KEY'] == KEY)
         print(os.environ.get('SECRET_KEY'))
         self.assertTrue(app.config['DEBUG'])
         self.assertTrue(app.config['TESTING'])
