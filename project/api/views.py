@@ -52,32 +52,20 @@ def add_user():
 @users_blueprint.route('/users/<user_id>', methods=['GET'])
 def get_single_user(user_id):
     """Get single user details"""
-
-    user_id_is_int = user_id.isdigit()
-    if not user_id_is_int:
-        print('user id is NOT an int')
-        return jsonify({'bad':'id'})
+    if not user_id.isdigit():
+        response_object = {
+            'status': 'fail',
+            'message': 'User does not exist'
+        }
+        return jsonify(response_object), 404
     else:
-        print('valid user id')
-        return jsonify({'good':'id'})
-
-    # if not user_id_is_int:
-    #     print('user id is NOT an int')
-    #     response_object = {
-    #         'status': 'fail',
-    #         'message': 'User does not exist'
-    #     }
-    #     return jsonify(response_object), 404
-
-    # else: 
-    #     print('user id is an int')
-    #     user = User.query.filter_by(id=user_id).first()
-    #     response_object = {
-    #         'status': 'success',
-    #         'data': {
-    #         'username': user.username,
-    #         'email': user.email,
-    #         'created_at': user.created_at
-    #         }
-    #     }
-    #     return jsonify(response_object), 200
+        user = User.query.filter_by(id=user_id).first()
+        response_object = {
+            'status': 'success',
+            'data': {
+            'username': user.username,
+            'email': user.email,
+            'created_at': user.created_at
+            }
+        }
+        return jsonify(response_object), 200
