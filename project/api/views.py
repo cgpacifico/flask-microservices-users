@@ -52,21 +52,16 @@ def add_user():
 @users_blueprint.route('/users/<user_id>', methods=['GET'])
 def get_single_user(user_id):
     """Get single user details"""
-    if not user_id.isdigit():
-        response_object = {
+    response_object = {
             'status': 'fail',
             'message': 'User does not exist'
         }
-        return jsonify(response_object), 404
-    else:
-        user = User.query.filter_by(id=user_id).first()
-        if user is None:
-            response_object = {
-                'status': 'fail',
-                'message': 'User does not exist'
-            }
+    try:
+        # string? digit? whatever, query for it anyway
+        user = User.query.filter_by(id=int(user_id)).first()
+        if not user:
             return jsonify(response_object), 404
-        else: 
+        else:
             response_object = {
                 'status': 'success',
                 'data': {
@@ -76,3 +71,5 @@ def get_single_user(user_id):
                 }
             }
             return jsonify(response_object), 200
+    except ValueError:
+        return jsonify(response_object), 404
