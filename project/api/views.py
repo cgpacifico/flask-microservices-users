@@ -31,12 +31,21 @@ def add_user():
 
     username = post_data.get('username')
     email = post_data.get('email')
-    # db.session.add(User(username=username, email=email))
-    # db.session.commit()
-    response_object = {
-        'status': 'success',
-        'message': f'{email} was added!'
-    }
+
+    try:
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            # db.session.add(User(username=username, email=email))
+            # db.session.commit()
+            response_object = {
+                'status': 'success',
+                'message': f'{email} was added!'
+            }
+        else:
+            print('There is nothing in the db yet so you should never get here')
+
+    except:
+        print('no idea how we got here') 
 
     # wahoo, 201 Created!
     return jsonify(response_object), 201
