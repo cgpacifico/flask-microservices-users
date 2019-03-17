@@ -15,6 +15,13 @@ def ping_pong():
 def add_user():
     # "request" is from flask
     post_data = request.get_json()
+    if not post_data:
+        response_object = {
+            'status': 'fail',
+            'message': 'Invalid payload.'
+        }
+        return jsonify(response_object), 400
+
     username = post_data.get('username')
     email = post_data.get('email')
     # db.session.add(User(username=username, email=email))
