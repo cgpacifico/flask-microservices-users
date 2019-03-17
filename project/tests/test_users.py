@@ -1,4 +1,5 @@
 import json
+from project import db
 from project.tests.base import BaseTestCase
 from project.api.models import User
 
@@ -7,10 +8,8 @@ class TestUserService(BaseTestCase):
 
     def test_ping_route(self):
         """Ensure the /ping route responds correctly"""
-        # self.client.get ? nifty utility method is nifty!
         response = self.client.get('/ping')
         data = json.loads(response.data.decode())
-        # print('hey look I can print a message', data)
         self.assertEqual(response.status_code, 200)
         self.assertIn('pong!', data['message'])
         self.assertIn('success', data['status'])
@@ -22,7 +21,6 @@ class TestUserService(BaseTestCase):
         # print('reponse', response) YIELDS <TestResponse streamed [404 NOT FOUND]>
 
     def test_create_user(self):
-        # this could maybe be two separate tests but... meh
         """Ensure a new user is added to the database with proper response"""
         username = 'cara'
         email = 'cara@snakes.com'
@@ -40,7 +38,6 @@ class TestUserService(BaseTestCase):
             self.assertEqual(response.status_code, 201)
             self.assertIn('cara@snakes.com was added!', data['message'])
             self.assertIn('success', data['status'])
-            # NOW this test really proves the user is in the db!
             user = User.query.filter_by(email=email).first()
             self.assertFalse(user is None)
 
@@ -109,4 +106,17 @@ class TestUserService(BaseTestCase):
             self.assertIn('fail', data['status'])
 
     def test_read_user(self):
-        pass
+        """Ensure getting a single user behaves correctly."""
+        username = 'single_user'
+        email = 'get@one_user.com'
+        user = User(username=username, email=email)
+        db.session.add(user)
+        db.session.commit()
+        with self.client:
+            response = self.client.get(f'/users/{user.id}')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue('created_at' in data['data'])
+            self.assertIn(username, data['data']['username'])
+            self.assertIn(email, data['data']['email'])
+            self.assertIn('success', data['status'])
