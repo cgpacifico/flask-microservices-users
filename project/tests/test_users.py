@@ -143,7 +143,7 @@ class TestUserService(BaseTestCase):
             self.assertIn('User does not exist', data['message'])
             self.assertIn('fail', data['status'])
 
-    def test_single_user_nonexistant_id(self):
+    def test_read_user_nonexistant_id(self):
         """Ensure error is thrown if the id does not exist."""
         with self.client:
             # blew out that number, just in case there is TONS of test data, someday ;)
@@ -155,5 +155,28 @@ class TestUserService(BaseTestCase):
             self.assertIn('User does not exist', data['message'])
             self.assertIn('fail', data['status'])
 
+    def test_read_all_users(self):
+        username1 = 'andrew'
+        username2 = 'zoe'
+        email1 = 'andrew@email1.com'
+        email2 = 'zoe@email2.com'
+
+        """Ensure get all users behaves correctly."""
+        db_add_user_helper(username1, email1)
+        db_add_user_helper(username2, email2)
+        with self.client:
+            response = self.client.get('/users')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['users']), 2)
+            self.assertTrue('created_at' in data['data']['users'][0])
+            self.assertTrue('created_at' in data['data']['users'][1])
+            self.assertIn(username1, data['data']['users'][0]['username'])
+            self.assertIn(
+                email1, data['data']['users'][0]['email'])
+            self.assertIn(username2, data['data']['users'][1]['username'])
+            self.assertIn(
+                email2, data['data']['users'][1]['email'])
+            self.assertIn('success', data['status'])
 
 
