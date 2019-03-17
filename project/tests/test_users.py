@@ -51,7 +51,7 @@ class TestUserService(BaseTestCase):
             self.assertIn('Invalid payload.', data['message'])
             self.assertIn('fail', data['status'])               
 
-    def test_add_user_invalid_json_keys(self):
+    def test_add_user_without_username(self):
         """Ensure error is thrown if the JSON object does not have a username"""
         with self.client:
             response = self.client.post(
