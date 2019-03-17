@@ -1,6 +1,7 @@
 from flask_script import Manager
 import unittest
 from project import create_app, db
+from project.api.models import User
 
 app = create_app()
 manager = Manager(app)
@@ -20,6 +21,13 @@ def test():
     if result.wasSuccessful():
         return 0
     return 1
+
+@manager.command
+def seed_db():
+    """Seeds the database."""
+    db.session.add(User(username='Alpha', email="alpha@seedData.com"))
+    db.session.add(User(username='Beta', email="beta@seedData.org"))
+    db.session.commit()
 
 if __name__ == '__main__':
     manager.run()
