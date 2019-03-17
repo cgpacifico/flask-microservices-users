@@ -20,3 +20,22 @@ class TestUserService(BaseTestCase):
         self.assertEqual(response.status_code, 404)
         # print('reponse', response) YIELDS <TestResponse streamed [404 NOT FOUND]>
 
+    def test_add_user(self):
+        """Ensure a new user can be added to the database"""
+        # booo nothing about this test proves this information made it to the database
+        with self.client:
+            response = self.client.post(
+                '/users',
+                data = json.dumps(dict(
+                    username='cara',
+                    email='cara@snakes.com'
+                )),
+                content_type='application/json',
+            )
+
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 201)
+            self.assertIn('cara@snakes.com was added!', data['message'])
+            self.assertIn('success', data['status'])
+        
+
