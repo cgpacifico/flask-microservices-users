@@ -130,3 +130,15 @@ class TestUserService(BaseTestCase):
             self.assertIn('User does not exist', data['message'])
             self.assertIn('fail', data['status'])
 
+    def test_single_user_nonexistant_id(self):
+        """Ensure error is thrown if the id does not exist."""
+        with self.client:
+            # blew out that number, just in case there is TONS of test data, someday ;)
+            # cannot make it TOO big, or:
+            # sqlalchemy.exc.DataError: (psycopg2.DataError) value "99999999999999999" is out of range for type integer
+            response = self.client.get('/users/99999999')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 404)
+            self.assertIn('User does not exist', data['message'])
+            self.assertIn('fail', data['status'])
+

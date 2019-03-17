@@ -60,12 +60,19 @@ def get_single_user(user_id):
         return jsonify(response_object), 404
     else:
         user = User.query.filter_by(id=user_id).first()
-        response_object = {
-            'status': 'success',
-            'data': {
-            'username': user.username,
-            'email': user.email,
-            'created_at': user.created_at
+        if user is None:
+            response_object = {
+                'status': 'fail',
+                'message': 'User does not exist'
             }
-        }
-        return jsonify(response_object), 200
+            return jsonify(response_object), 404
+        else: 
+            response_object = {
+                'status': 'success',
+                'data': {
+                'username': user.username,
+                'email': user.email,
+                'created_at': user.created_at
+                }
+            }
+            return jsonify(response_object), 200
