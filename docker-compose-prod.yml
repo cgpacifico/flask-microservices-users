@@ -30,3 +30,4 @@ services:
         condition: service_healthy
     links:
       - users-db
+    command: gunicorn -b 0.0.0.0:5000 manage:app
