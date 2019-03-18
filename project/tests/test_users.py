@@ -186,4 +186,21 @@ class TestUserService(BaseTestCase):
         self.assertIn(b'<h1>All Users</h1>', response.data)
         self.assertIn(b'<p>No users!</p>', response.data)
 
+    def test_index_page_with_users(self):
+        """Ensure the index route behaves correctly when there are users in the database."""
+        username1 = 'ben'
+        username2 = 'yara'
+        email1 = 'ben@email1.com'
+        email2 = 'yara@email2.com'
+
+        db_add_user_helper(username1, email1)
+        db_add_user_helper(username2, email2)
+
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<h1>All Users</h1>', response.data)
+        self.assertNotIn(b'<p>No users!</p>', response.data)
+        self.assertIn(b'<strong>ben</strong>', response.data)
+        self.assertIn(b'<strong>yara</strong>', response.data)
+
 

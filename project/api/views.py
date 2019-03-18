@@ -97,4 +97,7 @@ def get_all_users():
 
 @users_blueprint.route('/', methods=['GET'])
 def index():
-    return render_template('index.html')
+    # get the users from the database
+    users = User.query.all()
+    # provide users to the index page
+    return render_template('index.html', users=users)
