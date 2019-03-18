@@ -179,4 +179,11 @@ class TestUserService(BaseTestCase):
                 email2, data['data']['users'][1]['email'])
             self.assertIn('success', data['status'])
 
+    def test_index_page_no_users(self):
+        """Ensure the index route behaves correctly when no users in the database"""
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'<h1>All Users</h1>', response.data)
+        self.assertIn(b'<p>No users!</p>', response.data)
+
 
