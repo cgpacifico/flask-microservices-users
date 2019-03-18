@@ -95,9 +95,16 @@ def get_all_users():
     }
     return jsonify(response_object), 200
 
-@users_blueprint.route('/', methods=['GET'])
+@users_blueprint.route('/', methods=['GET', 'POST'])
 def index():
-    # get the users from the database
-    users = User.query.all()
-    # provide users to the index page
+    # print(request.form) YIElDS ImmutableMultiDict([('username', 'login-test-name'), ('email', 'login-email@realpython.com')])
+    # will just get skipped on 'GET'
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        db.session.add(User(username=username, email=email))
+        db.session.commit()
+        # now the query is sorted
+    users = User.query.order_by(User.created_at.desc()).all()
     return render_template('index.html', users=users)
+

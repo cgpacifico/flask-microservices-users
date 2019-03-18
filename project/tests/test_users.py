@@ -203,4 +203,16 @@ class TestUserService(BaseTestCase):
         self.assertIn(b'<strong>ben</strong>', response.data)
         self.assertIn(b'<strong>yara</strong>', response.data)
 
+    def test_index_add_user(self):
+        """Ensure a new user can be added to the database"""
+        with self.client:
+            response = self.client.post(
+                '/',
+                data=dict(username='login-test-name', email='login-email@rtest.com'),
+                follow_redirects=True
+            )
+            self.assertEqual(response.status_code, 200)
+            self.assertIn(b'<h1>All Users</h1>', response.data)
+            self.assertNotIn(b'<p>No users!</p>', response.data)
+            self.assertIn(b'<strong>login-test-name</strong>', response.data)
 
