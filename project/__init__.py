@@ -20,6 +20,7 @@ def create_app():
     # set config
     app_settings = os.getenv('APP_SETTINGS')
     app.config.from_object('project.config.DevelopmentConfig')
+    # app.config.from_object(app_settings)
 
     # set up extensions (SQLAlchemy method)
     db.init_app(app)
