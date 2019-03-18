@@ -33,14 +33,15 @@ services:
     links:
       - users-db
     command: gunicorn -b 0.0.0.0:5000 manage:app
-    nginx:
-      container_name: nginx
-      build: ./nginx/
-      restart: always
-      ports:
-        - 80:80
-      depends_on:
-        users-service:
-          condition: service_started
-      links:
-        - users-service
+    
+  nginx:
+    container_name: nginx
+    build: ./nginx/
+    restart: always
+    ports:
+      - 80:80
+    depends_on:
+      users-service:
+        condition: service_started
+    links:
+      - users-service
