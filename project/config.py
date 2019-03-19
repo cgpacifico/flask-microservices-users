@@ -1,12 +1,12 @@
 import os
-from secrets import KEY
+# from secrets import KEY
 
 class BaseConfig:
     """Base configuration"""
     DEBUG = False
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SECRET_KEY = KEY
+    # SECRET_KEY = KEY
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration"""
