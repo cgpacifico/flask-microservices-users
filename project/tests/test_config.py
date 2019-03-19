@@ -15,20 +15,14 @@ class TestDevelopmentConfig(TestCase):
 
     def test_app_is_development(self):
         # self.assertFalse(app.config['SECRET_KEY'] is None)
-        # self.assertTrue(app.config['SECRET_KEY'] == KEY)
+        # self.assertTrue(app.config['SECRET_KEY'] == 'my_precious')
         self.assertTrue(app.config['DEBUG'] is True)
         self.assertFalse(current_app is None)
-        # hack, for now, to make the test pass on production
-
-        # ... except not this b/c APP_SETTING is an env variable not a config
-        # if not app.config['APP_SETTINGS'] == ['project.config.ProductionConfig']:
-        is_production = os.environ['APP_SETTINGS'] == 'project.config.ProductionConfig'
-        print('production?', is_production)
-        if not is_production:
-            self.assertTrue(
-                app.config['SQLALCHEMY_DATABASE_URI'] == 
-                'postgres://postgres:postgres@users-db:5432/users_dev'
-            )
+        self.assertTrue(
+            app.config['SQLALCHEMY_DATABASE_URI'] ==
+            # FIX - get the DB's URL from the environment
+            os.environ.get('DATABASE_URL')
+        )
 
 class TestTestingConfig(TestCase):
     def create_app(self):
@@ -43,7 +37,7 @@ class TestTestingConfig(TestCase):
         self.assertFalse(app.config['PRESERVE_CONTEXT_ON_EXCEPTION'])
         self.assertTrue(
             app.config['SQLALCHEMY_DATABASE_URI'] ==
-            'postgres://postgres:postgres@users-db:5432/users_test'
+            os.environ.get('DATABASE_TEST_URL')
         )
 
 class TestProductionConfig(TestCase):
