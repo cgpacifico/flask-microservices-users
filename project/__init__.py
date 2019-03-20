@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS
 
 # view the app configs, including DEBUG and TESTING
 # $: docker-compose logs -f users-service
@@ -16,6 +17,9 @@ db = SQLAlchemy()
 def create_app():
     # instantiate the app
     app = Flask(__name__)
+
+    # enable CORS
+    CORS(app)
 
     # set config
     app_settings = os.getenv('APP_SETTINGS')
