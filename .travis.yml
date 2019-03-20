@@ -8,11 +8,12 @@ service:
 
 install:
   - pip install -r requirements.txt
-  - pip install Flask-Script
+  # - pip install Flask-Script
 
 before_script:
   - export APP_SETTINGS="project.config.TestingConfig"
   - export DATABASE_TEST_URL=postgresql://postgres:@localhost/users_test
+  - echo app.config['SQLALCHEMY_DATABASE_URI']
   - psql -c 'CREATE DATABASE users_test;' -U postgres
   - python manage.py recreate_db
 
