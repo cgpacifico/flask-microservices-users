@@ -1,10 +1,12 @@
 import json
+import datetime
+import unittest
 from project import db
 from project.tests.base import BaseTestCase
 from project.api.models import User
 
-def db_add_user_helper(username, email):
-    user = User(username=username, email=email)
+def db_add_user_helper(username, email, created_at=datetime.datetime.utcnow()):
+    user = User(username=username, email=email, created_at=created_at)
     db.session.add(user)
     db.session.commit()
     return user
@@ -115,14 +117,6 @@ class TestUserService(BaseTestCase):
         """Ensure getting a single user behaves correctly."""
         username = 'single_user'
         email = 'get@one_user.com'
-        # this User method forms a user object
-        # user = User(username=username, email=email)
-        # # then adds it
-        # db.session.add(user)
-        # # then saves it
-        # db.session.commit()
-
-        # use my helper instead
         user = db_add_user_helper(username=username, email=email)
 
         with self.client:
@@ -155,22 +149,29 @@ class TestUserService(BaseTestCase):
             self.assertIn('User does not exist', data['message'])
             self.assertIn('fail', data['status'])
 
+    # this may need more assertions
     def test_read_all_users(self):
+        """Ensure get all users behaves correctly."""
         username1 = 'andrew'
         username2 = 'zoe'
         email1 = 'andrew@email1.com'
         email2 = 'zoe@email2.com'
+        created_30_days_ago = datetime.datetime.utcnow() + datetime.timedelta(-30)
 
-        """Ensure get all users behaves correctly."""
-        db_add_user_helper(username1, email1)
+        db_add_user_helper(username1, email1, created_30_days_ago)
         db_add_user_helper(username2, email2)
         with self.client:
             response = self.client.get('/users')
             data = json.loads(response.data.decode())
+            # success!
             self.assertEqual(response.status_code, 200)
+            # both users are in there
             self.assertEqual(len(data['data']['users']), 2)
+
+            # both users have created dates
             self.assertTrue('created_at' in data['data']['users'][0])
             self.assertTrue('created_at' in data['data']['users'][1])
+
             self.assertIn(username1, data['data']['users'][0]['username'])
             self.assertIn(
                 email1, data['data']['users'][0]['email'])
@@ -179,6 +180,8 @@ class TestUserService(BaseTestCase):
                 email2, data['data']['users'][1]['email'])
             self.assertIn('success', data['status'])
 
+    # content of these tests should move elsewhere
+    @unittest.skip("skip index test")
     def test_index_page_no_users(self):
         """Ensure the index route behaves correctly when no users in the database"""
         response = self.client.get('/')
@@ -186,6 +189,7 @@ class TestUserService(BaseTestCase):
         self.assertIn(b'<h1>All Users</h1>', response.data)
         self.assertIn(b'<p>No users!</p>', response.data)
 
+    @unittest.skip("skip index test")
     def test_index_page_with_users(self):
         """Ensure the index route behaves correctly when there are users in the database."""
         username1 = 'ben'
@@ -203,6 +207,7 @@ class TestUserService(BaseTestCase):
         self.assertIn(b'<strong>ben</strong>', response.data)
         self.assertIn(b'<strong>yara</strong>', response.data)
 
+    @unittest.skip("skip index test")
     def test_index_add_user(self):
         """Ensure a new user can be added to the database"""
         with self.client:
@@ -215,4 +220,4 @@ class TestUserService(BaseTestCase):
             self.assertIn(b'<h1>All Users</h1>', response.data)
             self.assertNotIn(b'<p>No users!</p>', response.data)
             self.assertIn(b'<strong>login-test-name</strong>', response.data)
-
+    ###

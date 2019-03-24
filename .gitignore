@@ -3,3 +3,4 @@ env
 secrets.py
 .DS_Store
 htmlcov
+scripts
