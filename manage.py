@@ -22,9 +22,12 @@ def recreate_db():
     db.session.commit()
 
 @manager.command
-def test():
+def test(test_name=None):
     """Runs the tests without code coverage"""
-    tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
+    if test_name is None: 
+        tests = unittest.TestLoader().discover('project/tests', pattern='test*.py')
+    else:
+        tests = unittest.TestLoader().loadTestsFromName('project.tests.' + test_name)
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
         return 0
